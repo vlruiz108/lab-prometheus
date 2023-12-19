@@ -148,16 +148,21 @@ Este laboratório é baseado no exemplo disponível no site [prometheus.io](http
 5. **Atualização do arquivo de configuração do Prometheus (`prometheus.yml`)**
 
     ```yaml
-    global:
-      scrape_interval: 15s
+  global:
+    scrape_interval: 5s
 
-    scrape_configs:
-      - job_name: prometheus
-        static_configs:
-          - targets: ["localhost:9090"]
-      - job_name: simple_server
-        static_configs:
-          - targets: ["localhost:8090"]
+  scrape_configs:
+    - job_name: 'node-exporter'
+      static_configs:
+        - targets: ['o seu ip:9100']
+
+    - job_name: 'prometheus'
+      static_configs:
+        - targets: ['localhost:9090']
+
+    - job_name: 'simple_server'
+      static_configs:
+        - targets: ["o seu ip:8090"]
     ```
 
 6. **Subir o container do Prometheus novamente para atualizar as configurações e visualizar a métrica `ping_request_count`**
@@ -165,33 +170,30 @@ Este laboratório é baseado no exemplo disponível no site [prometheus.io](http
 ### Visualizando Métricas Utilizando o Grafana
 1. **Ajuste do arquivo `docker-compose.yml` para incluir o Grafana**
 
-    ```docker
-    version: '3'
-    services:
-      prometheus:
-        image: prom/prometheus
-        ports:
-          - 9090:9090
-        volumes:
-          - ./prometheus.yml:/etc/prometheus/prometheus.yml
-        command:
-          - '--config.file=/etc/prometheus/prometheus.yml'
-        depends_on:
-          - node-exporter
-        network_mode: "host"
+  ```docker
+version: '3'
+  services:
+    prometheus:
+      image: prom/prometheus
+      ports:
+        - 9090:9090
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+      depends_on:
+        - node-exporter
 
-      node-exporter:
-        image: prom/node-exporter
-        ports:
-          - 9100:9100
-        network_mode: "host"
-
-      grafana:
-        image: grafana/grafana
-        ports:
-          - 3000:3000
-        network_mode: "host"
-    ```
+    node-exporter:
+      image: prom/node-exporter
+      ports:
+        - 9100:9100
+    
+    grafana:
+      image: grafana/grafana
+      ports:
+        - 3000:3000
+  ```
 
 2. **Execução do Docker Compose e subida dos containers**
 3. **Adicionando Prometheus como fonte de dados no Grafana**
