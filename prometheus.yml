@@ -1,6 +1,13 @@
 global:
   scrape_interval: 5s
 
+rule_files:
+  - "alert.rules"
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets: ['192.168.0.41:9093']
+
 scrape_configs:
   - job_name: 'node-exporter'
     static_configs:
